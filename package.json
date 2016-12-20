@@ -1,0 +1,80 @@
+{
+  "name": "flickr-search",
+  "version": "1.0.0",
+  "description": "A lightweight search browser around the Flickr API.",
+  "scripts": {
+    "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
+    "build": "npm run clean && npm run build:webpack",
+    "clean": "rimraf dist",
+    "lint": "eslint src",
+    "start": "node server.dev.js",
+    "test": "node karma.server.js",
+    "test:watch": "node karma.server.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damassi/groundwork-interview"
+  },
+  "keywords": [
+    "browser",
+    "flickr",
+    "react"
+  ],
+  "author": "Christopher Pappas <damassi.pappas@gmail.com>",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/damassi/groundwork-interview/issues"
+  },
+  "homepage": "https://github.com/damassi/groundwork-interview",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-react-transform": "^2.0.2",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "enzyme": "^2.6.0",
+    "eslint": "^3.12.2",
+    "eslint-plugin-react": "^6.8.0",
+    "expect": "^1.20.2",
+    "express": "^4.14.0",
+    "fetch-mock": "^5.8.0",
+    "html-webpack-plugin": "git+https://github.com/ampedandwired/html-webpack-plugin.git",
+    "jsdom": "^9.9.1",
+    "karma": "^1.3.0",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-beep-reporter": "0.1.4",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jsdom-launcher": "^5.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-react-jsx-preprocessor": "0.1.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "^0.0.26",
+    "karma-webpack": "^1.8.0",
+    "mocha": "^3.2.0",
+    "react-addons-test-utils": "^15.4.1",
+    "react-tools": "0.13.3",
+    "react-transform-catch-errors": "^1.0.2",
+    "react-transform-hmr": "^1.0.4",
+    "redbox-react": "^1.3.3",
+    "rimraf": "^2.5.4",
+    "webpack": "^1.14.0",
+    "webpack-dev-middleware": "^1.9.0",
+    "webpack-hot-middleware": "^2.13.2",
+    "webpack-notifier": "^1.5.0",
+    "yargs": "^6.5.0"
+  },
+  "dependencies": {
+    "axios": "^0.15.3",
+    "invariant": "^2.2.2",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.debounce": "^4.0.8",
+    "map-cache": "^0.2.2",
+    "observ": "0.2.0",
+    "query-string": "^4.2.3",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1"
+  }
+}
