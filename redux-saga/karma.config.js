@@ -35,19 +35,29 @@ module.exports = function(config) {
       devtool: 'inline-source-map',
 
       resolve: {
-        extensions: ['', '.js', '.jsx'],
-        root: [
-          path.resolve('./src')
-        ],
-        modulesDirectories: [
+        modules: [
+          path.join(__dirname, 'src'),
           'node_modules'
         ],
-
-        // FIXME: Enzyme Lib issues: See https://github.com/airbnb/enzyme/issues/47
         alias: {
           sinon: 'sinon/pkg/sinon'
         }
       },
+
+      // resolve: {
+      //   extensions: ['', '.js', '.jsx'],
+      //   root: [
+      //     path.resolve('./src')
+      //   ],
+      //   modulesDirectories: [
+      //     'node_modules'
+      //   ],
+      //
+      //   // FIXME: Enzyme Lib issues: See https://github.com/airbnb/enzyme/issues/47
+      //   alias: {
+      //     sinon: 'sinon/pkg/sinon'
+      //   }
+      // },
 
       // FIXME: Enzyme
       externals: {
@@ -64,23 +74,50 @@ module.exports = function(config) {
       ],
 
       module: {
-
-        // FIXME: Enzyme
         noParse: [
           /node_modules\/sinon\//
         ],
-        loaders: [
+        rules: [
           {
             test: /\.js$/,
-            loader: 'babel-loader',
-            exclude: /node_modules/,
-            loader: 'babel-loader',
-            query: {
-              presets: ['latest', 'stage-0', 'react']
-            }
-          }
+            exclude: /(node_modules)/,
+            use: [
+              {
+                loader: 'babel-loader',
+                options: {
+                  plugins: [
+                    'transform-runtime'
+                  ],
+                  presets: [
+                    'latest',
+                    'react',
+                    'stage-0'
+                  ]
+                }
+              }
+            ]
+          },
         ]
       }
+
+      // module: {
+      //
+      //   // FIXME: Enzyme
+      //   noParse: [
+      //     /node_modules\/sinon\//
+      //   ],
+      //   loaders: [
+      //     {
+      //       test: /\.js$/,
+      //       loader: 'babel-loader',
+      //       exclude: /node_modules/,
+      //       loader: 'babel-loader',
+      //       query: {
+      //         presets: ['latest', 'stage-0', 'react']
+      //       }
+      //     }
+      //   ]
+      // }
     },
 
     webpackServer: {

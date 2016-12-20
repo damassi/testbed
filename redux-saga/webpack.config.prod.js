@@ -15,16 +15,13 @@ module.exports = {
   },
 
   resolve: {
-    root: [
-      path.resolve('./src')
-    ],
-    modulesDirectories: [
+    modules: [
+      path.join(__dirname, 'src'),
       'node_modules'
     ]
   },
 
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       '__DEV__': false,
       'process.env': {
@@ -42,19 +39,43 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
-        loader: 'babel-loader',
-        query: {
-          presets: [
-            'latest',
-            'react',
-            'stage-0'
-          ]
-        }
-      }
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              plugins: [
+                'transform-runtime'
+              ],
+              presets: [
+                'latest',
+                'react',
+                'stage-0'
+              ]
+            }
+          }
+        ]
+      },
     ]
   }
+
+  // module: {
+  //   loaders: [
+  //     {
+  //       test: /\.js$/,
+  //       exclude: /(node_modules)/,
+  //       loader: 'babel-loader',
+  //       query: {
+  //         presets: [
+  //           'latest',
+  //           'react',
+  //           'stage-0'
+  //         ]
+  //       }
+  //     }
+  //   ]
+  // }
 }

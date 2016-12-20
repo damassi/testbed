@@ -5,6 +5,10 @@ const WebpackNotifierPlugin = require('webpack-notifier')
 module.exports = {
   devtool: 'source-map',
 
+  performance: {
+    hints: false
+  },
+
   entry: [
     'webpack-hot-middleware/client',
     './src/index'
@@ -17,10 +21,8 @@ module.exports = {
   },
 
   resolve: {
-    root: [
-      path.resolve('./src')
-    ],
-    modulesDirectories: [
+    modules: [
+      path.join(__dirname, 'src'),
       'node_modules'
     ]
   },
@@ -35,21 +37,39 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
-        loader: 'babel-loader',
-        query: {
-          plugins: [
-            'transform-runtime'
-          ],
-          presets: [
-            'latest',
-            'react',
-            'stage-0'
-          ]
-        }
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              plugins: [
+                'transform-runtime',
+                ['react-transform', {
+                    transforms: [
+                      {
+                        transform: 'react-transform-hmr',
+                        imports: ['react'],
+                        locals: ['module']
+                      },
+                      {
+                        'transform': 'react-transform-catch-errors',
+                        'imports': ['react', 'redbox-react']
+                      }
+                    ]
+                  }
+                ]
+              ],
+              presets: [
+                'latest',
+                'react',
+                'stage-0'
+              ]
+            }
+          }
+        ]
       },
       // {
       //   test: /\.js$/,
@@ -62,18 +82,18 @@ module.exports = {
       //     ],
       //     extra: {
       //       'react-transform': {
-      //         transforms: [
-      //           {
-      //             transform: 'react-transform-hmr',
-      //             imports: ['react'],
-      //             locals: ['module']
-      //           },
-      //           {
-      //             'transform': 'react-transform-catch-errors',
-      //             'imports': ['react', 'redbox-react']
-      //           }
-      //         ]
-      //       }
+            //   transforms: [
+            //     {
+            //       transform: 'react-transform-hmr',
+            //       imports: ['react'],
+            //       locals: ['module']
+            //     },
+            //     {
+            //       'transform': 'react-transform-catch-errors',
+            //       'imports': ['react', 'redbox-react']
+            //     }
+            //   ]
+            // }
       //     }
       //   }
       // }
