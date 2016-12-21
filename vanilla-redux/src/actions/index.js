@@ -32,39 +32,41 @@ export function search(query) {
     if (cached) {
       const cachedPayload = JSON.parse(cached)
 
-      return dispatchPayload({
+      dispatchPayload({
         photos: {
           ...cachedPayload
         }
       })
-    }
 
-    try {
-      dispatch({
-        type: SHOW_PRELOADER
-      })
+      // No cache, proceed with GET
+    } else {
+      try {
+        dispatch({
+          type: SHOW_PRELOADER
+        })
 
-      const {
-        data: {
-          photos
-        }
-      } = await api.search({
-        text: query
-      })
+        const {
+          data: {
+            photos
+          }
+        } = await api.search({
+          text: query
+        })
 
-      dispatchPayload({
-        photos: {
-          results: photos.photo,
-          total: photos.total
-        }
-      })
+        dispatchPayload({
+          photos: {
+            results: photos.photo,
+            total: photos.total
+          }
+        })
 
-    } catch (error) {
-      throwSyncError(
-        '(actions/search.js) Error searching Flickr:',
-        error,
-        dispatch
-      )
+      } catch (error) {
+        throwSyncError(
+          '(actions/search.js) Error searching Flickr:',
+          error,
+          dispatch
+        )
+      }
     }
 
     function dispatchPayload(payload) {
