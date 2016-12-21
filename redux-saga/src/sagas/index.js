@@ -1,7 +1,16 @@
+import expect from 'expect';
 import { MIN_INPUT_LENGTH } from 'config'
 import { call, cancel, fork, put, select, take } from 'redux-saga/effects'
-import * as type from 'actions'
 import * as api from 'utils/api'
+
+import {
+  fetchRequest,
+  fetchFailure,
+  fetchSuccess,
+  retrieveCache,
+
+  BUILD_QUERY,
+} from 'actions'
 
 function * searchPhotoByQuery(action) {
   const {
@@ -24,47 +33,35 @@ function * searchPhotoByQuery(action) {
 
   if (cached) {
     const payload = JSON.parse(cached)
+    yield put(retrieveCache(payload))
 
-    yield put({
-      type: type.RETRIEVE_CACHE,
-      payload: {
-        photos: payload
-      }
-    })
-
-    // No cache; proceed witih GET
+    // Empty cache: proceed with GET
   } else {
-    yield put({
-      type: type.FETCH_REQUEST
-    })
+    yield put(fetchRequest())
 
-    const {
-      data: {
-        photos
-      }
-    } = yield call(api.search, {
-      text: query
-    })
-
-    if (photos) {
-      yield put({
-        type: type.FETCH_SUCCESS,
-        payload: {
-          photos: {
-            results: photos.photo,
-            total: photos.total
-          }
+    try {
+      const {
+        data: {
+          photos
         }
+      } = yield call(api.search, {
+        text: query
       })
+
+      if (photos) {
+        yield put(fetchSuccess(photos))
+      }
+    } catch (error) {
+      yield put(fetchFailure(error))
     }
   }
 }
 
 function * watchers() {
-  let currentTask = undefined;
+  let currentTask
 
   while (true) {
-    const action = yield take(type.BUILD_QUERY)
+    const action = yield take(BUILD_QUERY)
 
     if (currentTask) {
       yield cancel(currentTask)
@@ -79,3 +76,48 @@ export default function * rootSaga() {
     watchers()
   ]
 }
+
+
+// Dummy tests
+// -----------
+
+function test() {
+  const action = {
+    payload: {
+      query: 'foo'
+    }
+  }
+
+  // Task should return cached result
+  let gen = searchPhotoByQuery(action)
+  expect(gen.next().value).toEqual(select())
+
+  const cache = {
+    photos: {
+      cache: {
+        foo: JSON.stringify(action.payload)
+      }
+    }
+  }
+
+  expect(gen.next(cache).value).toEqual(put(retrieveCache(action.payload)))
+  expect(gen.next().done).toEqual(true)
+
+  // Task should fetch result
+  gen = searchPhotoByQuery(action)
+  gen.next()
+
+  expect(gen.next({photos: {}}).value).toEqual(put(fetchRequest()))
+  expect(gen.next().value).toEqual(call(api.search, { text: 'foo' }))
+
+  const photos = [1, 2, 3]
+  expect(
+    gen.next({
+      data: {
+        photos
+      }
+    }).value
+  ).toEqual(put(fetchSuccess(photos)))
+}
+
+test()

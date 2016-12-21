@@ -14,7 +14,3 @@ render(
 
   , document.getElementById('root')
 )
-
-if (__DEV__) {
-  module.hot.accept();
-}
