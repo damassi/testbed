@@ -1,18 +1,15 @@
 import React, { PropTypes } from 'react'
-import { connect } from 'react-redux'
 
-const Status = ({ status }) =>
+const Status = (_, { status }) =>
   <div>
     {status && status}
   </div>
 
-Status.propTypes = {
+Status.contextTypes = {
   status: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
   ])
 }
 
-export default connect((state) => ({
-  status: state.photos.status
-}))(Status)
+export default Status

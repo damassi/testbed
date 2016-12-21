@@ -18,7 +18,8 @@ export function imageUrl(...args) {
   // See API for other sizes: https://www.flickr.com/services/api/misc.urls.html
   const size = 'q'
 
-  return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_${size}.jpg`
+  const url = `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_${size}.jpg`
+  return url
 }
 
 export function pageUrl(userId, photoId) {
@@ -27,5 +28,6 @@ export function pageUrl(userId, photoId) {
     'Error getting image url: `userId` or `photoId` is undefined.'
   )
 
-  return `https://www.flickr.com/photos/${userId}/${photoId}`
+  const url = `https://www.flickr.com/photos/${userId}/${photoId}`
+  return url
 }

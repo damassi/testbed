@@ -4,7 +4,6 @@ import rootSaga from 'sagas'
 import thunk from 'redux-thunk'
 import { createStore, applyMiddleware } from 'redux'
 
-
 export default function configureStore(rootReducer, initialState) {
   const sagaMiddleware = createSagaMiddleware();
 

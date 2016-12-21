@@ -5,7 +5,7 @@ import { search } from 'actions'
 import { connect } from 'react-redux'
 import { MIN_INPUT_LENGTH } from 'config'
 
-const SearchInput = ({ dispatch, loading, query }) => {
+const SearchInput = ({ dispatch, isFetching, query }) => {
 
   const dispatchSearch = debounce((value) =>
     dispatch(search(value)), 300)
@@ -24,7 +24,7 @@ const SearchInput = ({ dispatch, loading, query }) => {
 
   return (
     <div>
-      { loading &&
+      { isFetching &&
         <LoadIndicator /> }
 
       <input
@@ -43,12 +43,12 @@ const SearchInput = ({ dispatch, loading, query }) => {
 }
 
 SearchInput.propTypes = {
+  isFetching: PropTypes.bool.isRequired,
   query: PropTypes.string.isRequired,
-  loading: PropTypes.bool
 }
 
 export default connect((state) => ({
-  loading: state.photos.loading,
+  isFetching: state.photos.isFetching,
   query: state.photos.query
 }))(SearchInput)
 

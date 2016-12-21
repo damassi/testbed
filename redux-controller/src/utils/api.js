@@ -7,7 +7,7 @@ import {
   PAGE_SIZE
 } from 'config'
 
-export async function search(fetchParams) {
+export async function search(text) {
 
   const params = queryString.stringify({
     api_key: FLICKR_API_KEY,
@@ -15,7 +15,7 @@ export async function search(fetchParams) {
     nojsoncallback: '?',
     method: 'flickr.photos.search',
     per_page: PAGE_SIZE,
-    ...fetchParams
+    text
   })
 
   return await http.get(FLICKR_API_ENDPOINT + '?' + params)

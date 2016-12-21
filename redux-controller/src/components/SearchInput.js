@@ -1,14 +1,8 @@
 import LoadIndicator from 'components/LoadIndicator'
 import React, { PropTypes } from 'react'
-import * as actions from 'actions'
-import { connect } from 'react-redux'
 import { MIN_INPUT_LENGTH } from 'config'
 
-const SearchInput = ({ dispatch, isFetching, query }) => {
-
-  const handleChange = ({currentTarget}) => {
-    dispatch(actions.buildQuery(currentTarget.value))
-  }
+const SearchInput = (_, { buildQuery, isFetching, query }) => {
 
   const textStatusColor = query.length < MIN_INPUT_LENGTH
     ? '#999'
@@ -20,10 +14,11 @@ const SearchInput = ({ dispatch, isFetching, query }) => {
         <LoadIndicator /> }
 
       <input
+        autoFocus
         placeholder='Search'
         type='text'
         defaultValue={query}
-        onChange={handleChange}
+        onChange={(event) => buildQuery(event.currentTarget.value)}
         style={{
           ...styles.input,
           color: textStatusColor
@@ -34,15 +29,13 @@ const SearchInput = ({ dispatch, isFetching, query }) => {
   )
 }
 
-SearchInput.propTypes = {
-  query: PropTypes.string.isRequired,
-  isFetching: PropTypes.bool
+SearchInput.contextTypes = {
+  buildQuery: PropTypes.func.isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  query: PropTypes.string.isRequired
 }
 
-export default connect((state) => ({
-  isFetching: state.photos.isFetching,
-  query: state.photos.query
-}))(SearchInput)
+export default SearchInput
 
 const styles = {
   input: {

@@ -21,9 +21,10 @@ function photoReducer(state = initialState, action) {
         isFetching: true
       }, state)
 
-    case type.FETCH_ERROR:
+    case type.FETCH_FAILURE:
       return u({
-        isFetching: false
+        isFetching: false,
+        status: action.payload.error
       }, state)
 
     case type.RETRIEVE_CACHE:

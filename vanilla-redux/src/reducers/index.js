@@ -4,7 +4,7 @@ import { combineReducers } from 'redux';
 
 const initialState = {
   cache: {},
-  loading: false,
+  isFetching: false,
   query: '',
   photos: {
     results: [],
@@ -16,17 +16,24 @@ const initialState = {
 function photoReducer(state = initialState, action) {
   switch (action.type) {
 
-    case type.SHOW_PRELOADER:
-      return u({
-        loading: true
-      }, state)
-
-    case type.QUERY:
+    case type.BUILD_QUERY:
       return u({
         query: action.payload.query
       }, state)
 
-    case type.SEARCH: {
+    case type.FETCH_REQUEST:
+      return u({
+        isFetching: true
+      }, state)
+
+    case type.FETCH_FAILURE:
+      return u({
+        isFetching: false,
+        message: action.payload.error
+      }, state)
+
+    case type.RETRIEVE_CACHE:
+    case type.FETCH_SUCCESS: {
       const { query } = state
       const { photos } = action.payload
 
@@ -34,29 +41,10 @@ function photoReducer(state = initialState, action) {
         cache: {
           [query]: JSON.stringify(photos)
         },
-        loading: false,
+        isFetching: false,
+        photos,
         query,
-        photos: {
-          ...photos
-        },
         status: undefined
-      }, state)
-    }
-
-    case type.UPDATE_STATUS: {
-      const {
-        responseStatus: {
-          status: _status,
-          statusText
-        }
-      } = action.payload
-
-      const status = _status === 404
-        ? '404 Error searching Flickr: Not found'
-        : statusText
-
-      return u({
-        status
       }, state)
     }
 

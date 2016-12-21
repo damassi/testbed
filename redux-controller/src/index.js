@@ -1,4 +1,5 @@
-import FlickrApp from './FlickrApp'
+import 'babel-polyfill'
+import AppController from './AppController'
 import React from 'react'
 import configureStore from 'utils/configureStore'
 import rootReducer from 'reducers'
@@ -9,7 +10,7 @@ const store = configureStore(rootReducer)
 
 render(
   <Provider store={store}>
-    <FlickrApp />
+    <AppController />
   </Provider>
 
   , document.getElementById('root')

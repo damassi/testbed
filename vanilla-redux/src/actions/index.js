@@ -2,24 +2,55 @@ import throwSyncError from 'utils/throwSyncError'
 import * as api from 'utils/api'
 import { MIN_INPUT_LENGTH } from 'config'
 
-export const QUERY = 'QUERY'
-export const SEARCH = 'SEARCH'
-export const SHOW_PRELOADER = 'SHOW_PRELOADER'
+export const BUILD_QUERY = 'BUILD_QUERY'
+export const FETCH_REQUEST = 'FETCH_REQUEST'
+export const FETCH_FAILURE = 'FETCH_FAILURE'
+export const FETCH_SUCCESS = 'FETCH_SUCCESS'
+export const RETRIEVE_CACHE = 'RETRIEVE_CACHE'
 export const UPDATE_STATUS = 'UPDATE_STATUS'
+
+export const buildQuery = (query) => ({
+  type: BUILD_QUERY,
+  payload: {
+    query
+  }
+})
+
+export const fetchRequest = () => ({
+  type: FETCH_REQUEST
+})
+
+export const fetchFailure = (error) => ({
+  type: FETCH_FAILURE,
+  payload: {
+    error
+  }
+})
+
+export const fetchSuccess = (response) => ({
+  type: FETCH_SUCCESS,
+  payload: {
+    photos: {
+      results: response.photo,
+      total: response.total
+    }
+  }
+})
+
+export const retrieveCache = (cache) => ({
+  type: RETRIEVE_CACHE,
+  payload: {
+    photos: cache
+  }
+})
 
 export function search(query) {
   return async (dispatch, getState) => {
-
-    dispatch({
-      type: QUERY,
-      payload: {
-        query
-      }
-    })
-
     if (query.length < MIN_INPUT_LENGTH) {
       return false
     }
+
+    dispatch(buildQuery(query))
 
     const {
       photos: {
@@ -30,20 +61,12 @@ export function search(query) {
     const cached = cache && cache[query]
 
     if (cached) {
-      const cachedPayload = JSON.parse(cached)
-
-      dispatchPayload({
-        photos: {
-          ...cachedPayload
-        }
-      })
+      dispatch(retrieveCache(JSON.parse(cached)))
 
       // No cache, proceed with GET
     } else {
       try {
-        dispatch({
-          type: SHOW_PRELOADER
-        })
+        dispatch(fetchRequest())
 
         const {
           data: {
@@ -53,30 +76,16 @@ export function search(query) {
           text: query
         })
 
-        dispatchPayload({
-          photos: {
-            results: photos.photo,
-            total: photos.total
-          }
-        })
-
+        dispatch(fetchSuccess(photos))
       } catch (error) {
+        dispatch(fetchFailure(error))
+
         throwSyncError(
           '(actions/search.js) Error searching Flickr:',
           error,
           dispatch
         )
       }
-    }
-
-    function dispatchPayload(payload) {
-      dispatch({
-        type: SEARCH,
-        payload: {
-          query,
-          ...payload
-        }
-      })
     }
   }
 }
