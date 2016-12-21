@@ -1,12 +1,13 @@
+import LoadIndicator from 'components/LoadIndicator'
 import React, { PropTypes } from 'react'
 import debounce from 'lodash.debounce'
-import search, { MIN_INPUT_LENGTH } from 'actions/search'
-import connect from 'components/utils/connect'
-import LoadIndicator from 'components/LoadIndicator'
+import { search } from 'actions'
+import { connect } from 'react-redux'
+import { MIN_INPUT_LENGTH } from 'config'
 
 const SearchInput = ({ dispatch, loading, query }) => {
 
-  const _dispatch = debounce((value) =>
+  const dispatchSearch = debounce((value) =>
     dispatch(search(value)), 300)
 
   const handleChange = (event) => {
@@ -14,7 +15,7 @@ const SearchInput = ({ dispatch, loading, query }) => {
       value
     } = event.currentTarget
 
-    _dispatch(value)
+    dispatchSearch(value)
   }
 
   const textStatusColor = query.length < MIN_INPUT_LENGTH
@@ -46,10 +47,10 @@ SearchInput.propTypes = {
   loading: PropTypes.bool
 }
 
-export default connect(SearchInput, (state) => ({
-  loading: state.loading,
-  query: state.query
-}))
+export default connect((state) => ({
+  loading: state.photos.loading,
+  query: state.photos.query
+}))(SearchInput)
 
 const styles = {
   input: {

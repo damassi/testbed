@@ -5,7 +5,7 @@ import {
   FLICKR_API_ENDPOINT,
   FLICKR_API_KEY,
   PAGE_SIZE
-} from 'constants/config'
+} from 'config'
 
 export async function search(fetchParams) {
 

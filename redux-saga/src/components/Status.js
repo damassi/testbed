@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import connect from 'components/utils/connect'
+import { connect } from 'react-redux'
 
 const Status = ({ status }) =>
   <div>
@@ -13,6 +13,6 @@ Status.propTypes = {
   ])
 }
 
-export default connect(Status, (state) => ({
-  status: state.status
-}))
+export default connect((state) => ({
+  status: state.photos.status
+}))(Status)

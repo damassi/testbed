@@ -1,14 +1,17 @@
 import throwSyncError from 'utils/throwSyncError'
-import * as actionTypes from 'constants/actionTypes'
-import * as api from 'actions/utils/api'
+import * as api from 'utils/api'
+import { MIN_INPUT_LENGTH } from 'config'
 
-export const MIN_INPUT_LENGTH = 3
+export const QUERY = 'QUERY'
+export const SEARCH = 'SEARCH'
+export const SHOW_PRELOADER = 'SHOW_PRELOADER'
+export const UPDATE_STATUS = 'UPDATE_STATUS'
 
-export default function search(query) {
+export function search(query) {
   return async (dispatch, getState) => {
 
     dispatch({
-      type: actionTypes.QUERY,
+      type: QUERY,
       payload: {
         query
       }
@@ -18,10 +21,16 @@ export default function search(query) {
       return false
     }
 
-    const { cache } = getState()
+    const {
+      photos: {
+        cache
+      }
+    } = getState()
 
-    if (cache.has(query)) {
-      const cachedPayload = JSON.parse(cache.get(query))
+    const cached = cache && cache[query]
+
+    if (cached) {
+      const cachedPayload = JSON.parse(cached)
 
       return dispatchPayload({
         photos: {
@@ -32,7 +41,7 @@ export default function search(query) {
 
     try {
       dispatch({
-        type: actionTypes.SHOW_PRELOADER
+        type: SHOW_PRELOADER
       })
 
       const {
@@ -52,8 +61,7 @@ export default function search(query) {
 
     } catch (error) {
       throwSyncError(
-        '(actions/search.js) \n' +
-        'Error searching Flickr:',
+        '(actions/search.js) Error searching Flickr:',
         error,
         dispatch
       )
@@ -61,12 +69,21 @@ export default function search(query) {
 
     function dispatchPayload(payload) {
       dispatch({
-        type: actionTypes.SEARCH,
+        type: SEARCH,
         payload: {
           query,
           ...payload
         }
       })
+    }
+  }
+}
+
+export function updateStatus(responseStatus) {
+  return {
+    type: UPDATE_STATUS,
+    payload: {
+      responseStatus
     }
   }
 }

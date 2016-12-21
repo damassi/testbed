@@ -1,4 +1,4 @@
-import updateStatus from 'actions/updateStatus'
+import { updateStatus } from 'actions'
 
 export default function throwSyncError(msg, error, dispatch) {
   if (error instanceof Error) {

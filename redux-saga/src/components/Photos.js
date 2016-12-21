@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import connect from 'components/utils/connect'
+import { connect } from 'react-redux';
 import Photo from 'components/Photo'
 
 const Photos = ({ results }) =>
@@ -13,6 +13,6 @@ Photos.propTypes = {
   results: PropTypes.array.isRequired
 }
 
-export default connect(Photos, (state) => ({
-  results: state.photos.results
-}))
+export default connect((state) => ({
+  results: state.photos.photos.results
+}))(Photos)
