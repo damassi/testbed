@@ -7,19 +7,18 @@ export const SEARCH = 'SEARCH'
 export const SHOW_PRELOADER = 'SHOW_PRELOADER'
 export const UPDATE_STATUS = 'UPDATE_STATUS'
 
-export function testCall() {
+
+export function queryAction(query) {
   return {
-    type: 'TEST_CALL',
+    type: QUERY,
     payload: {
-      foo: 'bar'
+      query
     }
   }
 }
 
 export function search(query) {
   return async (dispatch, getState) => {
-
-    dispatch(testCall())
 
     dispatch({
       type: QUERY,

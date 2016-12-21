@@ -1,21 +1,13 @@
 import LoadIndicator from 'components/LoadIndicator'
 import React, { PropTypes } from 'react'
-import debounce from 'lodash.debounce'
-import { search } from 'actions'
+import * as actions from 'actions'
 import { connect } from 'react-redux'
 import { MIN_INPUT_LENGTH } from 'config'
 
 const SearchInput = ({ dispatch, loading, query }) => {
 
-  const dispatchSearch = debounce((value) =>
-    dispatch(search(value)), 300)
-
-  const handleChange = (event) => {
-    const {
-      value
-    } = event.currentTarget
-
-    dispatchSearch(value)
+  const handleChange = ({currentTarget}) => {
+    dispatch(actions.queryAction(currentTarget.value))
   }
 
   const textStatusColor = query.length < MIN_INPUT_LENGTH

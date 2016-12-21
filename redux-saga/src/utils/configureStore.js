@@ -9,7 +9,9 @@ export const sagaMiddleware = createSagaMiddleware();
 const createStoreWithMiddleware = applyMiddleware(
   thunk,
   sagaMiddleware,
-  createLogger()
+  createLogger({
+    collapsed: true
+  })
 )(createStore)
 
 export default function configureStore(rootReducer, initialState = {}) {
