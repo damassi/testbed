@@ -1,7 +1,5 @@
-# Stack
-
 ```shell
-npm install
-npm start
-npm run build
+yarn
+yarn start
+yarn run build
 ```

@@ -18,7 +18,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 app.use(express.static('public'))
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.dev.html'))
+  res.sendFile(path.join(__dirname, 'index.dev.html'))
 })
 
 app.use((req, res, next) => {
