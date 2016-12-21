@@ -4,10 +4,10 @@ import * as actions from 'actions'
 import { connect } from 'react-redux'
 import { MIN_INPUT_LENGTH } from 'config'
 
-const SearchInput = ({ dispatch, loading, query }) => {
+const SearchInput = ({ dispatch, isFetching, query }) => {
 
   const handleChange = ({currentTarget}) => {
-    dispatch(actions.queryAction(currentTarget.value))
+    dispatch(actions.buildQuery(currentTarget.value))
   }
 
   const textStatusColor = query.length < MIN_INPUT_LENGTH
@@ -16,7 +16,7 @@ const SearchInput = ({ dispatch, loading, query }) => {
 
   return (
     <div>
-      { loading &&
+      { isFetching &&
         <LoadIndicator /> }
 
       <input
@@ -36,11 +36,11 @@ const SearchInput = ({ dispatch, loading, query }) => {
 
 SearchInput.propTypes = {
   query: PropTypes.string.isRequired,
-  loading: PropTypes.bool
+  isFetching: PropTypes.bool
 }
 
 export default connect((state) => ({
-  loading: state.photos.loading,
+  isFetching: state.photos.isFetching,
   query: state.photos.query
 }))(SearchInput)
 

@@ -1,93 +1,17 @@
-import throwSyncError from 'utils/throwSyncError'
-import * as api from 'utils/api'
-import { MIN_INPUT_LENGTH } from 'config'
-
-export const QUERY = 'QUERY'
-export const SEARCH = 'SEARCH'
-export const SHOW_PRELOADER = 'SHOW_PRELOADER'
+export const BUILD_QUERY = 'BUILD_QUERY'
+export const FETCH_REQUEST = 'FETCH_REQUEST'
+export const FETCH_ERROR = 'FETCH_ERROR'
+export const FETCH_SUCCESS = 'FETCH_SUCCESS'
+export const RETRIEVE_CACHE = 'RETRIEVE_CACHE'
 export const UPDATE_STATUS = 'UPDATE_STATUS'
 
 
-export function queryAction(query) {
-  return {
-    type: QUERY,
-    payload: {
-      query
-    }
+export const buildQuery = (query) => ({
+  type: BUILD_QUERY,
+  payload: {
+    query
   }
-}
-
-export function search(query) {
-  return async (dispatch, getState) => {
-
-    dispatch({
-      type: QUERY,
-      payload: {
-        query
-      }
-    })
-
-    if (query.length < MIN_INPUT_LENGTH) {
-      return false
-    }
-
-    const {
-      photos: {
-        cache
-      }
-    } = getState()
-
-    const cached = cache && cache[query]
-
-    if (cached) {
-      const cachedPayload = JSON.parse(cached)
-
-      return dispatchPayload({
-        photos: {
-          ...cachedPayload
-        }
-      })
-    }
-
-    try {
-      dispatch({
-        type: SHOW_PRELOADER
-      })
-
-      const {
-        data: {
-          photos
-        }
-      } = await api.search({
-        text: query
-      })
-
-      dispatchPayload({
-        photos: {
-          results: photos.photo,
-          total: photos.total
-        }
-      })
-
-    } catch (error) {
-      throwSyncError(
-        '(actions/search.js) Error searching Flickr:',
-        error,
-        dispatch
-      )
-    }
-
-    function dispatchPayload(payload) {
-      dispatch({
-        type: SEARCH,
-        payload: {
-          query,
-          ...payload
-        }
-      })
-    }
-  }
-}
+})
 
 export function updateStatus(responseStatus) {
   return {

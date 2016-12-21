@@ -1,62 +1,17 @@
 import { MIN_INPUT_LENGTH } from 'config'
-import { takeEvery, throttle } from 'redux-saga'
-import { call, put, select, take } from 'redux-saga/effects'
+import { call, cancel, fork, put, select, take } from 'redux-saga/effects'
 import * as type from 'actions'
 import * as api from 'utils/api'
 
-// function * querySaga(action) {
-//   const { query } = action.payload
-//
-//   if (query.length > MIN_INPUT_LENGTH) {
-//     yield put({
-//       type: type.SEARCH,
-//       payload: {
-//         query: action.payload.query
-//       }
-//     })
-//   }
-// }
-//
-// function * searchSaga() {
-//   yield put({
-//     type: type.SHOW_PRELOADER
-//   })
-//
-//   const {
-//     cache,
-//     query,
-//   } = yield select(s => s.photos)
-//
-//   const cached = cache && cache[query]
-//
-//   if (cached) {
-//     const cachedPayload = JSON.parse(cached)
-//   }
-//
-//   try {
-//     const {
-//       data: {
-//         photos
-//       }
-//     } = yield api.search({
-//       text: query
-//     })
-//
-//   } catch (error) {
-//     console.error('Error searching flickr', error)
-//   }
-//
-// }
-
-function * querySaga() {
+function * searchPhotoByQuery(action) {
   const {
     payload: {
       query
     }
-  } = yield take(type.QUERY)
+  } = action;
 
   if (query.length < MIN_INPUT_LENGTH) {
-    return false
+    return
   }
 
   const {
@@ -68,15 +23,19 @@ function * querySaga() {
   const cached = cache && cache[query]
 
   if (cached) {
-    const cachedPayload = JSON.parse(cached)
+    const payload = JSON.parse(cached)
 
     yield put({
-      type: type.SEARCH,
-      payload: cachedPayload
+      type: type.RETRIEVE_CACHE,
+      payload: {
+        photos: payload
+      }
     })
+
+    // No cache; proceed witih GET
   } else {
     yield put({
-      type: type.SHOW_PRELOADER
+      type: type.FETCH_REQUEST
     })
 
     const {
@@ -87,20 +46,32 @@ function * querySaga() {
       text: query
     })
 
-    yield put({
-      type: type.SEARCH,
-      payload: {
-        photos: {
-          results: photos.photo,
-          total: photos.total
+    if (photos) {
+      yield put({
+        type: type.FETCH_SUCCESS,
+        payload: {
+          photos: {
+            results: photos.photo,
+            total: photos.total
+          }
         }
-      }
-    })
+      })
+    }
   }
 }
 
 function * watchers() {
-  yield throttle(500, type.QUERY, querySaga)
+  let currentTask = undefined;
+
+  while (true) {
+    const action = yield take(type.BUILD_QUERY)
+
+    if (currentTask) {
+      yield cancel(currentTask)
+    }
+
+    currentTask = yield fork(searchPhotoByQuery, action)
+  }
 }
 
 export default function * rootSaga() {

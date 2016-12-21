@@ -4,7 +4,7 @@ import { combineReducers } from 'redux';
 
 const initialState = {
   cache: {},
-  loading: false,
+  isFetching: false,
   query: '',
   photos: {
     results: [],
@@ -16,17 +16,18 @@ const initialState = {
 function photoReducer(state = initialState, action) {
   switch (action.type) {
 
-    case type.SHOW_PRELOADER:
+    case type.FETCH_REQUEST:
       return u({
-        loading: true
+        isFetching: true
       }, state)
 
-    case type.QUERY:
+    case type.FETCH_ERROR:
       return u({
-        query: action.payload.query
+        isFetching: false
       }, state)
 
-    case type.SEARCH: {
+    case type.RETRIEVE_CACHE:
+    case type.FETCH_SUCCESS: {
       const { query } = state
       const { photos } = action.payload
 
@@ -34,7 +35,7 @@ function photoReducer(state = initialState, action) {
         cache: {
           [query]: JSON.stringify(photos)
         },
-        loading: false,
+        isFetching: false,
         query,
         photos: {
           ...photos
@@ -42,6 +43,11 @@ function photoReducer(state = initialState, action) {
         status: undefined
       }, state)
     }
+
+    case type.BUILD_QUERY:
+      return u({
+        query: action.payload.query
+      }, state)
 
     case type.UPDATE_STATUS: {
       const {
