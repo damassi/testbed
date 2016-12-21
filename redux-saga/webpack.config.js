@@ -45,6 +45,11 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
+              presets: [
+                'latest',
+                'react',
+                'stage-0'
+              ],
               plugins: [
                 'transform-runtime',
                 ['react-transform', {
@@ -61,42 +66,11 @@ module.exports = {
                     ]
                   }
                 ]
-              ],
-              presets: [
-                'latest',
-                'react',
-                'stage-0'
               ]
             }
           }
         ]
-      },
-      // {
-      //   test: /\.js$/,
-      //   loader: 'babel',
-      //   include: path.join(__dirname, 'src'),
-      //   query: {
-      //     stage: 0,
-      //     plugins: [
-      //       'react-transform'
-      //     ],
-      //     extra: {
-      //       'react-transform': {
-            //   transforms: [
-            //     {
-            //       transform: 'react-transform-hmr',
-            //       imports: ['react'],
-            //       locals: ['module']
-            //     },
-            //     {
-            //       'transform': 'react-transform-catch-errors',
-            //       'imports': ['react', 'redbox-react']
-            //     }
-            //   ]
-            // }
-      //     }
-      //   }
-      // }
+      }
     ]
   }
 }

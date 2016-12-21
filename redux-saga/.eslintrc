@@ -1,0 +1,7 @@
+# https://github.com/facebookincubator/create-react-app/tree/master/packages/eslint-config-react-app
+
+extends:
+  - 'react-app'
+
+rules:
+  'no-use-before-define': 0

@@ -1,10 +1,7 @@
-### Flickr Search
+# Stack
 
-```
-Node 4+
-
+```shell
 npm install
-npm test
 npm start
-npm build
+npm run build
 ```
