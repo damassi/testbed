@@ -45,11 +45,6 @@ app.model({
         status: undefined
       }
     },
-    retrieveCache: (state, data) => {
-      return {
-        isFetching: false
-      }
-    }
   },
   effects: {
     fetchPhotos: async (query, state, send, done) => {
