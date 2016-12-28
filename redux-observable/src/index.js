@@ -1,3 +1,5 @@
+import 'rxjs';
+
 import FlickrApp from './FlickrApp'
 import React from 'react'
 import configureStore from 'utils/configureStore'
@@ -11,6 +13,5 @@ render(
   <Provider store={store}>
     <FlickrApp />
   </Provider>
-
   , document.getElementById('root')
 )
