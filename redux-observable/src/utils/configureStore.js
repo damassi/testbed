@@ -1,22 +1,23 @@
 import createLogger from 'redux-logger'
-import createSagaMiddleware from 'redux-saga'
-import rootSaga from 'sagas'
+import { createEpicMiddleware } from 'redux-observable'
+import rootEpic from 'epics'
 import thunk from 'redux-thunk'
-import { createStore, applyMiddleware } from 'redux'
+import { compose, createStore, applyMiddleware } from 'redux'
 
 export default function configureStore(rootReducer, initialState) {
-  const sagaMiddleware = createSagaMiddleware();
+  const epicMiddleware = createEpicMiddleware(rootEpic);
 
   const middleware = applyMiddleware(
     thunk,
-    sagaMiddleware,
+    epicMiddleware,
     createLogger({
       collapsed: true
     })
   )
 
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
   return {
-    ...createStore(rootReducer, initialState, middleware),
-    runSaga: sagaMiddleware.run(rootSaga)
+    ...createStore(rootReducer, composeEnhancers(middleware), initialState)
   };
 }
