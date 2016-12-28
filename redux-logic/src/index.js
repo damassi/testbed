@@ -1,3 +1,5 @@
+import 'rxjs'
+
 import FlickrApp from './FlickrApp'
 import React from 'react'
 import configureStore from 'utils/configureStore'
