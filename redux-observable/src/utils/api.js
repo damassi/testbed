@@ -1,6 +1,5 @@
 import http from 'axios'
 import queryString from 'query-string'
-import { Observable } from 'rxjs'
 
 import {
   FLICKR_API_ENDPOINT,
@@ -8,15 +7,16 @@ import {
   PAGE_SIZE
 } from 'config'
 
-export const search = (fetchParams) => Observable.fromPromise(() => {
+export async function search(text) {
+
   const params = queryString.stringify({
     api_key: FLICKR_API_KEY,
     format: 'json',
     nojsoncallback: '?',
     method: 'flickr.photos.search',
     per_page: PAGE_SIZE,
-    ...fetchParams
+    text
   })
 
-  return http.get(FLICKR_API_ENDPOINT + '?' + params)
-})
+  return await http.get(FLICKR_API_ENDPOINT + '?' + params)
+}

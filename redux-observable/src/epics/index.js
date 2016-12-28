@@ -1,8 +1,8 @@
-// import expect from 'expect';
+import {Observable} from 'rxjs'
 import { MIN_INPUT_LENGTH } from 'config'
-// import { call, cancel, fork, put, select, take } from 'redux-saga/effects'
 import * as api from 'utils/api'
-import {combineEpics} from 'redux-observable'
+import { combineEpics } from 'redux-observable'
+import { concat as concat$ } from 'rxjs/observable/concat'
 
 import {
   fetchRequest,
@@ -11,23 +11,47 @@ import {
   retrieveCache,
 
   BUILD_QUERY,
-  FETCH_REQUEST
+  FETCH_REQUEST,
+  FETCH_SUCCESS
 } from 'actions'
 
-const fetchRequest$ = (action$) =>
+const fetchRequest$ = (action$, store) =>
   action$.ofType(BUILD_QUERY)
     .filter(action => action.payload.query.length > MIN_INPUT_LENGTH - 2)
-    .forkJoin(fetchRequest())
-    .map(x => {
-      console.log(x)
-      return x
-    })
-    .mergeMap(action => console.log(action))
-    // .mergeMap(action =>
-    //   api.search(action.payload.query)
-    //     .mapTo(fetchSuccess))
-    .mapTo({ type: 'PONG' });
+    .switchMap(action => {
+      const {
+        payload: {
+          query
+        }
+      } = action
 
+      const {
+        photos: {
+          cache
+        }
+      } = store.getState()
+
+      const cached = cache && cache[query]
+
+      if (cached) {
+        const payload = JSON.parse(cached)
+        return Observable.of(store.dispatch(retrieveCache(payload)))
+      } else {
+        return concat$(
+          Observable.of(fetchRequest()),
+          Observable.fromPromise(api.search(query))
+            .map(response => {
+              const {
+                data: {
+                  photos
+                }
+              } = response
+
+              return fetchSuccess(photos)
+            })
+        )
+      }
+    })
 
 const rootEpic = combineEpics(fetchRequest$)
 export default rootEpic
